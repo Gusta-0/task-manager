@@ -53,16 +53,7 @@ A autenticação é baseada em **JWT**:
 - Todas as rotas protegidas exigem esse token no cabeçalho:  
   `Authorization: Bearer <token>`
 
----
 
-## 📸 Diagrama de Classes
-
-> 💡 Diagrama gerado com Mermaid. Como o GitHub não renderiza Mermaid no README, uma imagem está disponível abaixo.
-
-![Diagrama de Classes](docs/diagrama.png)
-
-<details>
-<summary>Código Mermaid</summary>
 
 ```mermaid
 classDiagram

@@ -1,0 +1,38 @@
+# Diretórios e arquivos do Gradle
+.gradle/
+build/
+
+# Ferramentas de build
+!/gradle/wrapper/gradle-wrapper.jar
+
+# Arquivos IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Eclipse / STS
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+bin/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# VS Code
+.vscode/
+
+# Outros
+HELP.md
+
+# Arquivos do sistema operacional
+.DS_Store     # macOS
+Thumbs.db     # Windows
