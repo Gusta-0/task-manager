@@ -1,0 +1,16 @@
+# Modelo de mensagem de commit em portugues
+# ----------------------------------------
+# Titulo: resumo conciso da alteracao
+#
+# Corpo: explicacao detalhada do que foi alterado e por que
+#
+# Rodape: referencias a issues, tarefas, etc.
+#
+# Exemplos de prefixos:
+# feat: nova funcionalidade
+# fix: correcao de bug
+# docs: alteracoes na documentacao
+# style: formatacao, ponto e virgula, etc; sem alteracao de codigo
+# refactor: refatoracao de codigo
+# test: adicao ou correcao de testes
+# chore: atualizacao de tarefas de build, configs, etc; sem alteracao de codigo

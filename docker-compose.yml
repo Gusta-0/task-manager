@@ -1,41 +1,69 @@
-version: '3.8'
-
-services:
-  # Serviço do Banco de Dados PostgreSQL
-  postgres:
-    image: postgres:17.5
-    container_name: postgres_db
-    environment:
-      POSTGRES_USER: postgres       # Usuário do banco
-      POSTGRES_PASSWORD: 260698     # Senha do banco
-      POSTGRES_DB: taskdb           # Nome do banco que será criado automaticamente
-    ports:
-      - "5432:5432"                 # Porta local:porta no container
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    networks:
-      - local-network
-
-  # Interface web para o banco (pgAdmin)
-  pgadmin:
-    image: dpage/pgadmin4:9.5
-    container_name: pgadmin_ui
-    depends_on:
-      - postgres
-    environment:
-      PGADMIN_DEFAULT_EMAIL: task-api.com   # Login pgAdmin
-      PGADMIN_DEFAULT_PASSWORD: 260698        # Senha pgAdmin
-    ports:
-      - "8083:80"                    # Acesso via http://localhost:8083
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
-    networks:
-      - local-network
-
-volumes:
-  postgres-data:
-  pgadmin-data:
-
-networks:
-  local-network:
-    driver: bridge
+#version: '3.8'
+#
+#services:
+#  postgres:
+#    image: postgres:17.5
+#    container_name: postgres_db
+#    environment:
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: 260698
+#      POSTGRES_DB: taskdb
+#    ports:
+#      - "5432:5432"
+#    volumes:
+#      - postgres-data:/var/lib/postgresql/data
+#    networks:
+#      - local-network
+#    healthcheck:
+#      test: ["CMD-SHELL", "pg_isready -U postgres"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#
+#  taskmanager:
+#    image: task-manager:1.0
+#    container_name: taskmanager_app
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#    ports:
+#      - "8081:8081"  # Alterado para 8081
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_db:5432/taskdb
+#      SPRING_DATASOURCE_USERNAME: postgres
+#      SPRING_DATASOURCE_PASSWORD: 260698
+#      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+#      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+#      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+#      SPRING_JPA_SHOW_SQL: "true"
+#      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: "true"
+#      SPRING_JPA_OPEN_IN_VIEW: "false"
+#      SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: "5"
+#      SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE: "1"
+#      SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: "20000"
+#    networks:
+#      - local-network
+#
+#  pgadmin:
+#    image: dpage/pgadmin4:9.5
+#    container_name: pgadmin_ui
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#    environment:
+#      PGADMIN_DEFAULT_EMAIL: admin@taskmanager.com
+#      PGADMIN_DEFAULT_PASSWORD: 123456
+#    ports:
+#      - "8083:80"
+#    volumes:
+#      - pgadmin-data:/var/lib/pgadmin
+#    networks:
+#      - local-network
+#
+#volumes:
+#  postgres-data:
+#  pgadmin-data:
+#
+#networks:
+#  local-network:
+#    driver: bridge

@@ -1,57 +1,71 @@
 package com.gustavo.taskapi.taskmanager.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter//(AccessLevel.PROTECTED) // setter privado só para uso interno
-@NoArgsConstructor//(access = AccessLevel.PROTECTED)
-@AllArgsConstructor//(access = AccessLevel.PRIVATE) // construtor privado para uso do Builder
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class Task {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String title;
 
     private String description;
 
-    private LocalDateTime dueDate;
-
     @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private TaskStatus status = TaskStatus.TODO;
+    @Column(nullable = false)
+    private TaskStatus status;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public void assignToUser(User user) {
-        this.user = user;
+    @Column(nullable = false, updatable = false)
+    @CreatedDate
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(nullable = false)
+    @LastModifiedDate
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    @Column(nullable = false)
+    private LocalDateTime dueDate = LocalDateTime.now().plusDays(7);
+
+    @PrePersist
+    public void prePersist() {
+        LocalDateTime now = LocalDateTime.now();
+        
+        if (createdAt == null) {
+            this.createdAt = now;
+        }
+        
+        if (updatedAt == null) {
+            this.updatedAt = now;
+        }
+        
+        if (dueDate == null) {
+            this.dueDate = now.plusDays(7);
+        }
+    }
+    
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 
-//    public static Task creat//        Task task = new Task();
-////        task.title = title;
-////        task.description = description;
-////        task.dueDate = dueDate;
-////        task.status = TaskStatus.TODO;
-////        task.user = user;
-////        return task;
-////    }
-////
-////    public void update(String title, String description, LocalDateTime dueDate, User user) {
-////        this.title = title;
-////        this.description = description;
-////        this.dueDate = dueDate;
-////        this.user = user;
-////    }
-////
-////    public void updateStatus(TaskStatus status) {
-////        this.status = status;
-////    }e(String title, String description, LocalDateTime dueDate, User user) {
-
 }
+
 

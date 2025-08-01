@@ -1,7 +1,7 @@
 package com.gustavo.taskapi.taskmanager.controller;
 
 import com.gustavo.taskapi.taskmanager.dto.CreateUserRequest;
-import com.gustavo.taskapi.taskmanager.dto.UserDTO;
+import com.gustavo.taskapi.taskmanager.dto.UserResponse;
 import com.gustavo.taskapi.taskmanager.domain.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,23 +18,23 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody CreateUserRequest request) {
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
         return ResponseEntity.ok(userService.createUser(request));
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDTO>> getAllUsers() {
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id,
-                                              @Valid @RequestBody CreateUserRequest request) {
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id,
+                                                   @Valid @RequestBody CreateUserRequest request) {
         return ResponseEntity.ok(userService.updateUser(id, request));
     }
 

@@ -3,7 +3,7 @@ package com.gustavo.taskapi.taskmanager.domain.service;
 import com.gustavo.taskapi.taskmanager.domain.entity.User;
 import com.gustavo.taskapi.taskmanager.domain.repository.UserRepository;
 import com.gustavo.taskapi.taskmanager.dto.CreateUserRequest;
-import com.gustavo.taskapi.taskmanager.dto.UserDTO;
+import com.gustavo.taskapi.taskmanager.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserDTO createUser(CreateUserRequest request) {
+    public UserResponse createUser(CreateUserRequest request) {
         User user = new User();
         user.setName(request.name());
         user.setEmail(request.email());
@@ -25,17 +25,17 @@ public class UserService {
         return toDTO(userRepository.save(user));
     }
 
-    public List<UserDTO> getAllUsers() {
+    public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
-    public UserDTO getUserById(Long id) {
+    public UserResponse getUserById(Long id) {
         return toDTO(findUserByIdOrThrow(id));
     }
 
-    public UserDTO updateUser(Long id, CreateUserRequest request) {
+    public UserResponse updateUser(Long id, CreateUserRequest request) {
         User user = findUserByIdOrThrow(id);
 
         user.setName(request.name());
@@ -56,8 +56,8 @@ public class UserService {
         return findUserByIdOrThrow(id);
     }
 
-    private UserDTO toDTO(User user) {
-        return new UserDTO(user.getId(), user.getName(), user.getEmail());
+    private UserResponse toDTO(User user) {
+        return new UserResponse(user.getId(), user.getName(), user.getEmail());
     }
 
     private User findUserByIdOrThrow(Long id) {

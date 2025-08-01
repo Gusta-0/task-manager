@@ -4,11 +4,13 @@ import com.gustavo.taskapi.taskmanager.domain.entity.TaskStatus;
 
 import java.time.LocalDateTime;
 
-public record TaskDTO(
+public record TaskResponse(
         Long id,
         String title,
         String description,
-        LocalDateTime dueDate,
         TaskStatus status,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt,
+        LocalDateTime dueDate,
         Long userId
 ) {}

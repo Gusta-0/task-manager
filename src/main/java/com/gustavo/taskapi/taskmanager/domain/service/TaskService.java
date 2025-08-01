@@ -1,12 +1,16 @@
 package com.gustavo.taskapi.taskmanager.domain.service;
 
 import com.gustavo.taskapi.taskmanager.domain.entity.Task;
-import com.gustavo.taskapi.taskmanager.domain.entity.TaskStatus;
+import com.gustavo.taskapi.taskmanager.domain.entity.User;
 import com.gustavo.taskapi.taskmanager.domain.repository.TaskRepository;
+import com.gustavo.taskapi.taskmanager.domain.repository.UserRepository;
 import com.gustavo.taskapi.taskmanager.dto.CreateTaskRequest;
-import com.gustavo.taskapi.taskmanager.dto.TaskDTO;
+import com.gustavo.taskapi.taskmanager.dto.TaskMapper;
+import com.gustavo.taskapi.taskmanager.dto.TaskResponse;
+import com.gustavo.taskapi.taskmanager.dto.UpdateTaskRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,71 +19,51 @@ import java.util.stream.Collectors;
 public class TaskService {
 
     private final TaskRepository taskRepository;
-    private final UserService userService;
-    
-    public TaskDTO createTask(CreateTaskRequest request) {
-        Task task = new Task();
-        task.setTitle(request.title());
-        task.setDescription(request.description());
-        task.setDueDate(request.dueDate());
-        task.setStatus(TaskStatus.TODO);
-        task.setUser(userService.getByIdEntity(request.userId()));
+    private final UserRepository userRepository;
 
-        return toDTO(taskRepository.save(task));
+    public TaskResponse createTask(CreateTaskRequest request) {
+        User user = userRepository.findById(request.userId())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        Task task = Task.builder()
+                .title(request.title())
+                .description(request.description())
+                .status(request.status())
+                .user(user)
+                .createdAt(java.time.LocalDateTime.now())
+                .updatedAt(java.time.LocalDateTime.now())
+                .dueDate(java.time.LocalDateTime.now().plusDays(7))
+                .build();
+
+        taskRepository.save(task);
+        return TaskMapper.toResponse(task);
     }
 
-    public List<TaskDTO> getAllTasks() {
+
+    public TaskResponse updateTask(Long id, UpdateTaskRequest request) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tarefa não encontrada"));
+
+        task.setTitle(request.title());
+        task.setDescription(request.description());
+        task.setStatus(request.status());
+        // O campo updatedAt será atualizado automaticamente pelo método @PreUpdate
+
+        taskRepository.save(task);
+        return TaskMapper.toResponse(task);
+    }
+
+
+    public List<TaskResponse> listAllTasks() {
         return taskRepository.findAll().stream()
-                .map(this::toDTO)
+                .map(TaskMapper::toResponse)
                 .collect(Collectors.toList());
-    }
-
-    public List<TaskDTO> getTasksByUserId(Long userId) {
-        return taskRepository.findByUserId(userId).stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    public TaskDTO getTaskById(Long id) {
-        return toDTO(findTaskByIdOrThrow(id));
-    }
-
-    public TaskDTO updateTask(Long id, CreateTaskRequest request) {
-        Task task = findTaskByIdOrThrow(id);
-        task.setTitle(request.title());
-        task.setDescription(request.description());
-        task.setDueDate(request.dueDate());
-        task.setUser(userService.getByIdEntity(request.userId()));
-
-        return toDTO(taskRepository.save(task));
     }
 
     public void deleteTask(Long id) {
         if (!taskRepository.existsById(id)) {
-            throw new RuntimeException("Tarefa não encontrada para exclusão com id: " + id);
+            throw new RuntimeException("Tarefa não encontrada");
         }
         taskRepository.deleteById(id);
-    }
-
-    public TaskDTO updateTaskStatus(Long id, TaskStatus newStatus) {
-        Task task = findTaskByIdOrThrow(id);
-        task.setStatus(newStatus);
-        return toDTO(taskRepository.save(task));
-    }
-
-    private TaskDTO toDTO(Task task) {
-        return new TaskDTO(
-                task.getId(),
-                task.getTitle(),
-                task.getDescription(),
-                task.getDueDate(),
-                task.getStatus(),
-                task.getUser().getId()
-        );
-    }
-
-    private Task findTaskByIdOrThrow(Long id) {
-        return taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tarefa não encontrada com id: " + id));
     }
 }
